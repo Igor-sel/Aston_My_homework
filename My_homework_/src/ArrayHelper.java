@@ -48,12 +48,12 @@ public class ArrayHelper { // Для работы с массивами созд
     public void createArray(int length) {
 
         int[][] arr = new int[length][length];
-        for (int i = 0; i < length; i++) {
-            arr[i][i] = 1;
+        for (int i = 0; i < length; i++) { // данная конструкция подходит для массива, где количество строк
+            arr[i][i] = 1;                 // и количество столбцов равны
             arr[i][length - 1 - i] = 1;
 
-            /* for (int j = 0; j < length; j++) {
-                if ((i == j) || (i == length - 1 - j)) {
+            /* for (int j = 0; j < length; j++) {          // если в массиве количество строк и стобцов различные,
+                if ((i == j) || (i == length - 1 - j)) {   // необходимо использовать данную конструкцию
                     arr[i][j] = 1;
                 }
             } */
