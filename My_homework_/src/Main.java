@@ -11,5 +11,13 @@ public class Main {
         for (int i = 0; i < persArray.length; i++) {
              persArray[i].about();
         }
+        Park.Atractions atraction1 = new Park.Atractions("Аттракцион 1", "12:00 - 24:00", 15);
+        Park.Atractions atraction2 = new Park.Atractions("Аттракцион 2", "12:00 - 20:00", 10);
+
+        System.out.println(atraction1.getName());
+        System.out.println(atraction2.getCost());
+
+        atraction1.setName("Новое наименование аттракциона");
+        System.out.println(atraction1.getName());
     }
 }
