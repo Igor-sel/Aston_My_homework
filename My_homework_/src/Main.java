@@ -4,26 +4,20 @@ public class Main {
 
     public static void main(String[] args) {
 
-        // Задание 2. Сканнер для переменных сторон прямоугольника
-        Scanner in = new Scanner(System.in);
+        Animal[] animals = new Animal[7];
+        animals[0] = new Cat("Барсик", 200, 0);
+        animals[1] = new Cat("Мурзик", 200, 0);
+        animals[2] = new Cat("Мурка", 200, 0);
+        animals[3] = new Cat("Майка", 200, 0);
+        animals[4] = new Dog("Тузик", 500, 10);
+        animals[5] = new Dog("Шарик", 500, 10);
+        animals[6] = new Dog("Мухтар", 500, 10);
 
-        System.out.println("Введите длину прямоугольника: ");
-        float a = in.nextFloat();
-        System.out.println("Введите ширину прямоугольника: ");
-        float b = in.nextFloat();
+        //Вывод общих результатов из данных класса;
+        System.out.println("\nВсего котов: " + Cat.getCount());
+        System.out.println("Всего собак: " + Dog.getCount());
+        System.out.println("Всего животных: " + Animal.getCount() + "\n");
 
-        Rectangle rec1 = new Rectangle(a, b, "Blue", "Green");
-
-        System.out.println(rec1.toString());
-
-        // Переменные по другим фигурам прописываю сразу в методе
-        Triangle rec2 = new Triangle(3, 4, 5, "Black", "White");
-        System.out.println(rec2.toString());
-
-        Circle rec3 = new Circle (3, "Red", "Pink" );
-        System.out.println(rec3.toString());
-
-        // Пошло задание 1. Коты и собаки
         Scanner scanner = new Scanner(System.in);
 
         double runLimit = 200;
@@ -33,7 +27,6 @@ public class Main {
         runLimit = 500;
         swimLimit = 10;
         Animal dog = new Dog("Шарик", runLimit, swimLimit);
-
 
         System.out.println("Кошка может пробежать: " + cat.getRunLimit() +
                 " м. \nСобака может пробежать: " + dog.getRunLimit() + " м.");
@@ -53,6 +46,5 @@ public class Main {
 
         System.out.println("Кошка пытается проплыть (" + distance + "). Результат: " + cat.canSwim(distance));
         System.out.println("Собака пытается проплыть (" + distance + "). Результат: " + dog.canSwim(distance));
-
     }
 }
