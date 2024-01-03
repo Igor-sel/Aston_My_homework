@@ -4,7 +4,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        // Сканнер для переменных сторон прямоугольника
+        // Задание 2. Сканнер для переменных сторон прямоугольника
         Scanner in = new Scanner(System.in);
 
         System.out.println("Введите длину прямоугольника: ");
@@ -22,5 +22,37 @@ public class Main {
 
         Circle rec3 = new Circle (3, "Red", "Pink" );
         System.out.println(rec3.toString());
+
+        // Пошло задание 1. Коты и собаки
+        Scanner scanner = new Scanner(System.in);
+
+        double runLimit = 200;
+        double swimLimit = 0;
+        Cat cat = new Cat("Барсик", runLimit, swimLimit );
+
+        runLimit = 500;
+        swimLimit = 10;
+        Animal dog = new Dog("Шарик", runLimit, swimLimit);
+
+
+        System.out.println("Кошка может пробежать: " + cat.getRunLimit() +
+                " м. \nСобака может пробежать: " + dog.getRunLimit() + " м.");
+
+        System.out.println("Введите дистанцию для бега:");
+        double distance = scanner.nextDouble();
+
+        System.out.println("Кошка пытается пробежать (" + distance + "). Результат: " + cat.canRun(distance));
+        System.out.println("Собака пытается пробежать (" + distance + "). Результат: " + dog.canRun(distance));
+        System.out.println("\n****************\n");
+
+        System.out.println("Кошка может проплыть: " + cat.getSwimLimit() +
+                " м. \nСобака может проплыть: " + dog.getSwimLimit() + " м.");
+
+        System.out.println("Введите дистанцию для плавания:");
+        distance = scanner.nextDouble();
+
+        System.out.println("Кошка пытается проплыть (" + distance + "). Результат: " + cat.canSwim(distance));
+        System.out.println("Собака пытается проплыть (" + distance + "). Результат: " + dog.canSwim(distance));
+
     }
 }
