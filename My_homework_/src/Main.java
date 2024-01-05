@@ -9,15 +9,18 @@ public class Main {
         persArray[4] = new Employee("Bykov Alex", "PM", "bykov.alex@mailbox.com", 892312004, 28000, 28);
 
         for (int i = 0; i < persArray.length; i++) {
-             persArray[i].about();
+            persArray[i].about();
         }
-        Park.Atractions atraction1 = new Park.Atractions("Аттракцион 1", "12:00 - 24:00", 15);
-        Park.Atractions atraction2 = new Park.Atractions("Аттракцион 2", "12:00 - 20:00", 10);
 
-        System.out.println(atraction1.getName());
-        System.out.println(atraction2.getCost());
+        System.out.println();
 
-        atraction1.setName("Новое наименование аттракциона");
-        System.out.println(atraction1.getName());
+        Park.Atractions[] attracArray = new Park.Atractions[3];
+        attracArray[0] = new Park.Atractions("Аттракцион 1", "12:00 - 24:00", 15);
+        attracArray[1] = new Park.Atractions("Аттракцион 2", "10:00 - 20:00", 10);
+        attracArray[2] = new Park.Atractions("Аттракцион 3", "14:00 - 18:00", 20);
+
+        for (int i = 0; i < attracArray.length; i++) {
+            attracArray[i].getInfo();
+        }
     }
 }

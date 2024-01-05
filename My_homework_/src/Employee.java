@@ -11,6 +11,7 @@ public class Employee {
         this.age = age;
     }
     public void about() {
-        System.out.printf("Ф.И.О.: %s Должность: %s Email: %s Телефон: %s Зарплата: %s Возраст: %d \n", fullName, position, email, phoneNum, salary, age);
+        System.out.printf("Ф.И.О.: %s Должность: %s Email: %s Телефон: %s Зарплата: %s Возраст: %d \n",
+                fullName, position, email, phoneNum, salary, age);
     }
 }
