@@ -1,10 +1,13 @@
 public class Main {
 
     public static void main(String[] args) {
-        String fileName = "D:\\MyData.csv";
+        String fileName = "src/MyData.csv";
+        String[] header = new String[]{"value1", "value2", "value3"};
 
         AppData data = CsvUtils.Load(fileName);
 
-        CsvUtils.save(data, "D:\\MyData_new.csv");
+        data.setHeader(header);
+
+        CsvUtils.save(data, fileName);
     }
 }
