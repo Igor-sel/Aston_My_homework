@@ -10,6 +10,7 @@ public class Animal implements IAnimal {
         count++;
     }
 
+    public String getName() { return name; }
     public static int getCount() {
         return count;
     }
