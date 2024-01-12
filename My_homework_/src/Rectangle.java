@@ -8,9 +8,12 @@ public class Rectangle extends Shape implements IShape {
         this.b = b;
     }
     //Формула для нахождения площади прямоугольника
+    @Override
     public float getArea() {
         return a * b;
     }
+
+    @Override
     public float getPerimeter() {
         return (a + b) * 2;
     }

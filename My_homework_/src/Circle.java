@@ -7,10 +7,12 @@ public class Circle extends Shape implements IShape {
         this.r = r;
     }
 
+    @Override
     public float getArea() {
         return (float) (Math.PI * r * r);
     }
 
+    @Override
     public float getPerimeter() {
         return (float) (2 * Math.PI * r);
     }

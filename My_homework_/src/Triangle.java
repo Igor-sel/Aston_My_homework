@@ -10,12 +10,14 @@ public class Triangle extends Shape implements IShape {
     }
 
     //Формула для нахождения площади треугольника
+    @Override
     public float getArea() {
         float p = getPerimeter() / 2;
         return (float) Math.sqrt(p * (p - a) * (p - b) * (p - c));
     }
 
     //Формула для нахождения периметра треугольника
+    @Override
     public float getPerimeter() {
         return a + b + c;
     }
