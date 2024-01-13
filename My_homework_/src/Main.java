@@ -74,7 +74,8 @@ public class Main {
 
         bowl.info_2();
         System.out.println("Сколько граммов корма ещё добавить в миску?\n");
-        bowl.increaseFood(50);
+        int increaseFood = scanner.nextInt();
+        bowl.increaseFood(increaseFood);
         bowl.info_3();
 
         System.out.println("\n****************\n");
