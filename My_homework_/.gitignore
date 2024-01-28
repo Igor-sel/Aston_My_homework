@@ -3,9 +3,18 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 
-### myEdit (24122023) ###
-.idea
+### myEdit IntelliJ IDEA (24122023) ###
+.idea/
+*.iws
 *.iml
+*.ipr
+
+### myEdit Maven (25012024) ###
+log/
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
 ### Eclipse ###
 .apt_generated
