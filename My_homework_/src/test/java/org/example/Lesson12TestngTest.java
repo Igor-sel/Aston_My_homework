@@ -4,7 +4,7 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-public class Lesson12junit5Test {
+public class Lesson12TestngTest {
 
     @DataProvider(name = "number")
     public static Integer[][] number() {
@@ -13,6 +13,6 @@ public class Lesson12junit5Test {
 
     @Test(dataProvider = "number")
     public void calculateCheckFactorialNumber (long number, long expected) {
-        Assert.assertEquals(expected, Lesson12junit5.getFactorial(number));
+        Assert.assertEquals(expected, Lesson12Testng.getFactorial(number));
     }
 }
