@@ -84,6 +84,7 @@ public class MtsWebsiteTest {
         WebElement continueButton = driver.findElement(By.xpath("//*[@id='pay-connection']/button"));
         continueButton.click();
         driver.switchTo().frame(driver.findElement(By.xpath("//iframe[@class='bepaid-iframe']")));
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         WebElement headerFrame = driver.findElement(By.xpath("//p[@class='header__payment-info']"));
         Assert.assertEquals(deleteWhitespace(headerFrame.getAttribute("textContent")), "Оплата:УслугисвязиНомер:375297777777");
     }
