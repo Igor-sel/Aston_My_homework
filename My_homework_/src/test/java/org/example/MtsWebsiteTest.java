@@ -21,75 +21,119 @@ public class MtsWebsiteTest {
     }
 
     @BeforeClass
-    public void StartTest() {
+    public void SetUp() {
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
         driver.get("https://www.mts.by/");
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
         WebElement btnAgreeCookie = driver.findElement(By.id("cookie-agree"));
         btnAgreeCookie.click();
+        driver.findElement(By.xpath("//button[@class='select__header']")).click();
     }
-
+    
     @Test
-    public void testPaidSectionTitle() {
-        WebElement paidSectionTitle = driver.findElement(By.xpath("//div[@class='pay__wrapper']/h2"));
-        String headerWindows = paidSectionTitle.getText().replaceAll("\n", " ");
-        Assert.assertEquals(headerWindows, "Онлайн пополнение без комиссии");
+    public void testConnectionServiceModule() {
+        driver.findElement(By.xpath("//p[text()='Услуги связи']")).click();
+        WebElement connectionPhoneInput = driver.findElement(By.id("connection-phone"));
+        connectionPhoneInput.sendKeys("297777777");
+        String enteredNumber = connectionPhoneInput.getAttribute("value");
+        Assert.assertEquals(enteredNumber, "(29)777-77-77", "Phone number entered incorrectly");
+        WebElement connectionPaymentSumInput = driver.findElement(By.id("connection-sum"));
+        connectionPaymentSumInput.sendKeys("150");
+        String enteredSum = connectionPaymentSumInput.getAttribute("value");
+        Assert.assertEquals(enteredSum, "150", "Payment amount is incorrect");
+        WebElement connectionContinueButton = driver.findElement(By.xpath("//*[@id='pay-connection']/button"));
+        Assert.assertEquals(connectionContinueButton.getText(), "Продолжить");
+        connectionContinueButton.click();
+        driver.switchTo().frame(driver.findElement(By.xpath("//iframe[@class='bepaid-iframe']")));
+        driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+        // Поле "Сумма к оплате".
+        WebElement headerPaymentAmountFrame = driver.findElement(By.xpath("//p[@class='header__payment-amount']"));
+        Assert.assertEquals(deleteWhitespace(headerPaymentAmountFrame.getAttribute("textContent")), "150.00BYN");
+        // Кнопка "Сумма к оплате".
+        WebElement paymentButtonFrame = driver.findElement(By.xpath("//app-card-page/div/div[1]/button"));
+        Assert.assertEquals(deleteWhitespace(paymentButtonFrame.getAttribute("textContent")), "Оплатить150.00BYN");
+        // Общее поле "Услуги связи и номер телефона".
+        WebElement headerPaymentInfoFrame = driver.findElement(By.xpath("//p[@class='header__payment-info']"));
+        Assert.assertEquals(deleteWhitespace(headerPaymentInfoFrame.getAttribute("textContent")), "Оплата:УслугисвязиНомер:375297777777");
+        // Поле "Номер карты".
+        WebElement labelCartNumberFrame = driver.findElement(By.xpath("//app-input/div/div/div[1]/label"));
+        Assert.assertEquals(deleteWhitespace(labelCartNumberFrame.getAttribute("textContent")), "Номеркарты");
+        // Поле "Срок действия карты".
+        WebElement labelValidityPeriodFrame = driver.findElement(By.xpath("//app-card-input/form/div[1]/div[2]//div[1]/label"));
+        Assert.assertEquals(deleteWhitespace(labelValidityPeriodFrame.getAttribute("textContent")), "Срокдействия");
+        // Поле "CVC код".
+        WebElement labelCvccodeFrame = driver.findElement(By.xpath("//app-card-input/form/div[1]/div[2]/div[3]//div[1]/label"));
+        Assert.assertEquals(deleteWhitespace(labelCvccodeFrame.getAttribute("textContent")), "CVC");
+        // Поле "Имя держателя карты".
+        WebElement labelHolderNameFrame = driver.findElement(By.xpath("//app-card-input/form/div[1]/div[3]//div[1]/label"));
+        Assert.assertEquals(deleteWhitespace(labelHolderNameFrame.getAttribute("textContent")), "Имядержателя(какнакарте)");
     }
 
-    @DataProvider(name = "paymentSystemsLogos")
-    public static Object[] paymentSystemsData() {
+    @DataProvider(name = "paymentSystems")
+    public Object[] paymentSystems() {
         return new Object[] {"Visa", "MasterCard", "МИР", "Белкарт"};
     }
 
-    @Test(dataProvider = "paymentSystemsLogos")
-    public void testPaymentSysLogos(String paymentSystem) {
-        boolean logoPresent = driver.findElement(By.cssSelector("img[alt='" + paymentSystem + "']")).isDisplayed();
-        Assert.assertTrue(logoPresent, "Отсутствует логотип " + paymentSystem);
-    }
-
-    @Test
-    public void testServiceLink() {
-        WebElement serviceLink = driver.findElement(By.linkText("Подробнее о сервисе"));
-        serviceLink.click();
-        String currentUrl = driver.getCurrentUrl();
-        Assert.assertEquals(currentUrl, "https://www.mts.by/help/poryadok-oplaty-i-bezopasnost-internet-platezhey/");
-    }
-
-    @Test (dependsOnMethods = {"testServiceLink"})
-    public void testCommunicationServiceButton() {
+    @Test(dataProvider = "paymentSystems")
+    public void testPaymentSysLogos(String paymentSystemName) {
         driver.get("https://www.mts.by/");
         driver.findElement(By.xpath("//button[@class='select__header']")).click();
         driver.findElement(By.xpath("//p[text()='Услуги связи']")).click();
-    }
-
-    @Test (dependsOnMethods = {"testCommunicationServiceButton"})
-    public void testPhoneNumberInput() {
-        WebElement phoneInput = driver.findElement(By.id("connection-phone"));
-        phoneInput.sendKeys("297777777");
-        String enteredNumber = phoneInput.getAttribute("value");
-        Assert.assertEquals(enteredNumber, "(29)777-77-77", "Phone number entered incorrectly");
-    }
-
-    @Test (dependsOnMethods = {"testPhoneNumberInput"})
-    public void testPaymentSumInput() {
-        WebElement paymentSumInput = driver.findElement(By.id("connection-sum"));
-        paymentSumInput.sendKeys("150");
-        String enteredSum = paymentSumInput.getAttribute("value");
-        Assert.assertEquals(enteredSum, "150", "Payment amount is incorrect");
-    }
-
-    @Test (dependsOnMethods = {"testPaymentSumInput"})
-    public void testContinueButton() {
-        WebElement continueButton = driver.findElement(By.xpath("//*[@id='pay-connection']/button"));
-        continueButton.click();
+        //driver.switchTo().frame(driver.findElement(By.xpath("//iframe[@class='bepaid-iframe']")));
+        //driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
+        WebElement connectionPhoneInput = driver.findElement(By.id("connection-phone"));
+        connectionPhoneInput.sendKeys("297777777");
+        WebElement connectionPaymentSumInput = driver.findElement(By.id("connection-sum"));
+        connectionPaymentSumInput.sendKeys("150");
+        driver.findElement(By.xpath("//*[@id='pay-connection']/button")).click();
         driver.switchTo().frame(driver.findElement(By.xpath("//iframe[@class='bepaid-iframe']")));
-        WebElement headerFrame = driver.findElement(By.xpath("//p[@class='header__payment-info']"));
-        Assert.assertEquals(deleteWhitespace(headerFrame.getAttribute("textContent")), "Оплата:УслугисвязиНомер:375297777777");
+        driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+        WebElement paymentSystemLogo = driver.findElement(By.xpath("//app-card-input/form/div[1]/div[1]/app-input/div/div/div[2]/div/div/img[@alt='" + paymentSystemName + "']"));
+        Assert.assertTrue(paymentSystemLogo.isDisplayed(), "Отсутствует логотип" + paymentSystemName);
     }
-    
+
+    @Test (dependsOnMethods = {"testConnectionServiceModule"})
+    public void testHomeInternetModule() {
+        driver.get("https://www.mts.by/");
+        driver.findElement(By.xpath("//button[@class='select__header']")).click();
+        driver.findElement(By.xpath("//p[text()='Домашний интернет']")).click();
+        WebElement internetPhoneInputField = driver.findElement(By.id("internet-phone"));
+        Assert.assertEquals(internetPhoneInputField.getAttribute("placeholder"), "Номер абонента");
+        WebElement internetSumInputField = driver.findElement(By.id("internet-sum"));
+        Assert.assertEquals(internetSumInputField.getAttribute("placeholder"), "Сумма");
+        WebElement internetEmailInputField = driver.findElement(By.id("internet-email"));
+        Assert.assertEquals(internetEmailInputField.getAttribute("placeholder"), "E-mail для отправки чека");
+    }
+
+    @Test (dependsOnMethods = {"testHomeInternetModule"})
+    public void testInstallmentModule() {
+        driver.get("https://www.mts.by/");
+        driver.findElement(By.xpath("//button[@class='select__header']")).click();
+        driver.findElement(By.xpath("//p[text()='Рассрочка']")).click();
+        WebElement installmentScoreNumberField = driver.findElement(By.id("score-instalment"));
+        Assert.assertEquals(installmentScoreNumberField.getAttribute("placeholder"), "Номер счета на 44");
+        WebElement installmentSumInputField = driver.findElement(By.id("instalment-sum"));
+        Assert.assertEquals(installmentSumInputField.getAttribute("placeholder"), "Сумма");
+        WebElement installmentEmailInputField = driver.findElement(By.id("instalment-email"));
+        Assert.assertEquals(installmentEmailInputField.getAttribute("placeholder"), "E-mail для отправки чека");
+    }
+
+    @Test (dependsOnMethods = {"testInstallmentModule"})
+    public void testArrearsModule() {
+        driver.get("https://www.mts.by/");
+        driver.findElement(By.xpath("//button[@class='select__header']")).click();
+        driver.findElement(By.xpath("//p[text()='Задолженность']")).click();
+        WebElement arrearsScoreNumberField = driver.findElement(By.id("score-arrears"));
+        Assert.assertEquals(arrearsScoreNumberField.getAttribute("placeholder"), "Номер счета на 2073");
+        WebElement arrearsSumInputField = driver.findElement(By.id("arrears-sum"));
+        Assert.assertEquals(arrearsSumInputField.getAttribute("placeholder"), "Сумма");
+        WebElement arrearsEmailInputField = driver.findElement(By.id("arrears-email"));
+        Assert.assertEquals(arrearsEmailInputField.getAttribute("placeholder"), "E-mail для отправки чека");
+    }
+
     @AfterClass
-    public void tearDown() {
+    public void tearDown2() {
         driver.quit();
     }
 }
