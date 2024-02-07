@@ -1,20 +1,26 @@
 package org.example;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.*;
 
+import java.sql.DriverManager;
 import java.util.concurrent.TimeUnit;
+
+import static org.apache.commons.lang3.StringUtils.*;
 
 public class MtsWebsiteTest {
     private WebDriver driver;
 
     @Deprecated
-    public WebDriver.Timeouts implicitlyWait(long time, java.util.concurrent.TimeUnit unit) {
+    public WebDriver.Timeouts implicitlyWait(long time, TimeUnit unit) {
         return null;
     }
 
@@ -81,13 +87,12 @@ public class MtsWebsiteTest {
     public void testContinueButton() {
         WebElement continueButton = driver.findElement(By.xpath("//*[@id='pay-connection']/button"));
         continueButton.click();
-        /* Черновик
-        Assert.assertEquals(enteredSum, "150", "Payment amount is incorrect");
-        String currentUrl = driver.getCurrentUrl();
-        Assert.assertEquals(currentUrl, "https://www.mts.by/help/poryadok-oplaty-i-bezopasnost-internet-platezhey/");
-        */
+        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+        driver.switchTo().frame(driver.findElement(By.xpath("//iframe[@class='bepaid-iframe']")));
+        WebElement headerFrame = driver.findElement(By.xpath("//p[@class='header__payment-info']"));
+        Assert.assertEquals(deleteWhitespace(headerFrame.getAttribute("textContent")), "Оплата:УслугисвязиНомер:375297777777");
     }
-
+    
     @AfterClass
     public void tearDown() {
         driver.quit();
