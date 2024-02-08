@@ -85,7 +85,7 @@ public class MtsWebsiteTest {
         driver.findElement(By.xpath("//*[@id='pay-connection']/button")).click();
         driver.switchTo().frame(driver.findElement(By.xpath("//iframe[@class='bepaid-iframe']")));
         driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
-        WebElement paymentSystemLogo = driver.findElement(By.xpath("//img[contains(@src, 'visa')]"));
+        WebElement paymentSystemLogo = driver.findElement(By.xpath("//img[contains(@src, 'system')]"));
         Assert.assertFalse(paymentSystemLogo.isDisplayed(), "Отсутствует логотип " + paymentSystemName);
     }
 
