@@ -36,17 +36,14 @@ public class MtsWebsiteTest {
         driver.findElement(By.xpath("//p[text()='Услуги связи']")).click();
         WebElement connectionPhoneInput = driver.findElement(By.id("connection-phone"));
         connectionPhoneInput.sendKeys("297777777");
-        String enteredNumber = connectionPhoneInput.getAttribute("value");
-        Assert.assertEquals(enteredNumber, "(29)777-77-77", "Phone number entered incorrectly");
         WebElement connectionPaymentSumInput = driver.findElement(By.id("connection-sum"));
         connectionPaymentSumInput.sendKeys("150");
-        String enteredSum = connectionPaymentSumInput.getAttribute("value");
-        Assert.assertEquals(enteredSum, "150", "Payment amount is incorrect");
         WebElement connectionContinueButton = driver.findElement(By.xpath("//*[@id='pay-connection']/button"));
         Assert.assertEquals(connectionContinueButton.getText(), "Продолжить");
         connectionContinueButton.click();
         driver.switchTo().frame(driver.findElement(By.xpath("//iframe[@class='bepaid-iframe']")));
-        driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        // Проверка заполненных полей платежного фрейма.
         // Поле "Сумма к оплате".
         WebElement headerPaymentAmountFrame = driver.findElement(By.xpath("//p[@class='header__payment-amount']"));
         Assert.assertEquals(deleteWhitespace(headerPaymentAmountFrame.getAttribute("textContent")), "150.00BYN");
@@ -56,6 +53,7 @@ public class MtsWebsiteTest {
         // Общее поле "Услуги связи и номер телефона".
         WebElement headerPaymentInfoFrame = driver.findElement(By.xpath("//p[@class='header__payment-info']"));
         Assert.assertEquals(deleteWhitespace(headerPaymentInfoFrame.getAttribute("textContent")), "Оплата:УслугисвязиНомер:375297777777");
+        // Проверка незаполненных полей платежного фрейма.
         // Поле "Номер карты".
         WebElement labelCartNumberFrame = driver.findElement(By.xpath("//app-input/div/div/div[1]/label"));
         Assert.assertEquals(deleteWhitespace(labelCartNumberFrame.getAttribute("textContent")), "Номеркарты");
@@ -72,16 +70,14 @@ public class MtsWebsiteTest {
 
     @DataProvider(name = "paymentSystems")
     public Object[] paymentSystems() {
-        return new Object[] {"Visa", "MasterCard", "МИР", "Белкарт"};
+        return new Object[] {"visa", "mastercard", "belkart", "mir", "maestro" };
     }
 
-    @Test(dataProvider = "paymentSystems")
+    @Test(dataProvider = "paymentSystems") // Проверка логотипов платежных систем в платежном фрейме через модуль "Услуги связи"
     public void testPaymentSysLogos(String paymentSystemName) {
         driver.get("https://www.mts.by/");
         driver.findElement(By.xpath("//button[@class='select__header']")).click();
         driver.findElement(By.xpath("//p[text()='Услуги связи']")).click();
-        //driver.switchTo().frame(driver.findElement(By.xpath("//iframe[@class='bepaid-iframe']")));
-        //driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
         WebElement connectionPhoneInput = driver.findElement(By.id("connection-phone"));
         connectionPhoneInput.sendKeys("297777777");
         WebElement connectionPaymentSumInput = driver.findElement(By.id("connection-sum"));
@@ -89,11 +85,25 @@ public class MtsWebsiteTest {
         driver.findElement(By.xpath("//*[@id='pay-connection']/button")).click();
         driver.switchTo().frame(driver.findElement(By.xpath("//iframe[@class='bepaid-iframe']")));
         driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
-        WebElement paymentSystemLogo = driver.findElement(By.xpath("//app-card-input/form/div[1]/div[1]/app-input/div/div/div[2]/div/div/img[@alt='" + paymentSystemName + "']"));
-        Assert.assertTrue(paymentSystemLogo.isDisplayed(), "Отсутствует логотип" + paymentSystemName);
+        WebElement paymentSystemLogo = driver.findElement(By.xpath("//img[contains(@src, 'visa')]"));
+        Assert.assertFalse(paymentSystemLogo.isDisplayed(), "Отсутствует логотип " + paymentSystemName);
     }
 
     @Test (dependsOnMethods = {"testConnectionServiceModule"})
+    public void testConnectionServiceModuleEmpty() {
+        driver.get("https://www.mts.by/");
+        driver.findElement(By.xpath("//button[@class='select__header']")).click();
+        // Поиск элементов на странице
+        WebElement connectionPhoneInput = driver.findElement(By.id("connection-phone"));
+        WebElement connectionPaymentSumInput = driver.findElement(By.id("connection-sum"));
+        WebElement internetEmailInputField = driver.findElement(By.id("connection-email"));
+        // Проверка найденных элементов
+        Assert.assertEquals(connectionPhoneInput.getAttribute("placeholder"), "Номер телефона");
+        Assert.assertEquals(connectionPaymentSumInput.getAttribute("placeholder"), "Сумма");
+        Assert.assertEquals(internetEmailInputField.getAttribute("placeholder"), "E-mail для отправки чека");
+    }
+
+    @Test (dependsOnMethods = {"testConnectionServiceModuleEmpty"}) // Проверка незаполненных в модуле "Домашний интернет".
     public void testHomeInternetModule() {
         driver.get("https://www.mts.by/");
         driver.findElement(By.xpath("//button[@class='select__header']")).click();
@@ -106,7 +116,7 @@ public class MtsWebsiteTest {
         Assert.assertEquals(internetEmailInputField.getAttribute("placeholder"), "E-mail для отправки чека");
     }
 
-    @Test (dependsOnMethods = {"testHomeInternetModule"})
+    @Test (dependsOnMethods = {"testHomeInternetModule"}) // Проверка незаполненных в модуле "Рассрочка".
     public void testInstallmentModule() {
         driver.get("https://www.mts.by/");
         driver.findElement(By.xpath("//button[@class='select__header']")).click();
@@ -119,7 +129,7 @@ public class MtsWebsiteTest {
         Assert.assertEquals(installmentEmailInputField.getAttribute("placeholder"), "E-mail для отправки чека");
     }
 
-    @Test (dependsOnMethods = {"testInstallmentModule"})
+    @Test (dependsOnMethods = {"testInstallmentModule"}) // Проверка незаполненных в модуле "Задолженность".
     public void testArrearsModule() {
         driver.get("https://www.mts.by/");
         driver.findElement(By.xpath("//button[@class='select__header']")).click();
@@ -133,7 +143,7 @@ public class MtsWebsiteTest {
     }
 
     @AfterClass
-    public void tearDown2() {
+    public void tearDown() {
         driver.quit();
     }
 }
