@@ -1,34 +1,13 @@
-package org.example;
+package org.MtsWebsite;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
 import org.testng.annotations.*;
 
-import java.util.concurrent.TimeUnit;
-
 import static org.apache.commons.lang3.StringUtils.*;
 
-public class MtsWebsiteTest {
-    private WebDriver driver;
-
-    @Deprecated
-    public WebDriver.Timeouts implicitlyWait(long time, TimeUnit unit) {
-        return null;
-    }
-
-    @BeforeClass
-    public void StartTest() {
-        WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver();
-        driver.get("https://www.mts.by/");
-        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-        WebElement btnAgreeCookie = driver.findElement(By.id("cookie-agree"));
-        btnAgreeCookie.click();
-    }
+public class MtsWebsiteTest extends BaseTest {
 
     @Test
     public void testPaidSectionTitle() {
@@ -43,7 +22,7 @@ public class MtsWebsiteTest {
     }
 
     @Test(dataProvider = "paymentSystemsLogos")
-    public void testPaymentSysLogos(String paymentSystem) {
+    public void testPaymentSystemLogos(String paymentSystem) {
         boolean logoPresent = driver.findElement(By.cssSelector("img[alt='" + paymentSystem + "']")).isDisplayed();
         Assert.assertTrue(logoPresent, "Отсутствует логотип " + paymentSystem);
     }
@@ -54,11 +33,12 @@ public class MtsWebsiteTest {
         serviceLink.click();
         String currentUrl = driver.getCurrentUrl();
         Assert.assertEquals(currentUrl, "https://www.mts.by/help/poryadok-oplaty-i-bezopasnost-internet-platezhey/");
+        driver.get("https://www.mts.by/");
     }
 
     @Test (dependsOnMethods = {"testServiceLink"})
     public void testCommunicationServiceButton() {
-        driver.get("https://www.mts.by/");
+
         driver.findElement(By.xpath("//button[@class='select__header']")).click();
         driver.findElement(By.xpath("//p[text()='Услуги связи']")).click();
     }
@@ -84,13 +64,7 @@ public class MtsWebsiteTest {
         WebElement continueButton = driver.findElement(By.xpath("//*[@id='pay-connection']/button"));
         continueButton.click();
         driver.switchTo().frame(driver.findElement(By.xpath("//iframe[@class='bepaid-iframe']")));
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         WebElement headerFrame = driver.findElement(By.xpath("//p[@class='header__payment-info']"));
         Assert.assertEquals(deleteWhitespace(headerFrame.getAttribute("textContent")), "Оплата:УслугисвязиНомер:375297777777");
-    }
-    
-    @AfterClass
-    public void tearDown() {
-        driver.quit();
     }
 }
