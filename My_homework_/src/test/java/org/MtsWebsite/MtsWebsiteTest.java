@@ -1,48 +1,25 @@
-package org.example;
+package org.MtsWebsite;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
 import org.testng.annotations.*;
 
-import java.util.concurrent.TimeUnit;
-
 import static org.apache.commons.lang3.StringUtils.*;
 
-public class MtsWebsiteTest {
-    private WebDriver driver;
+public class MtsWebsiteTest extends BaseTest{
 
-    @Deprecated
-    public WebDriver.Timeouts implicitlyWait(long time, TimeUnit unit) {
-        return null;
-    }
-
-    @BeforeClass
-    public void SetUp() {
-        WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver();
-        driver.get("https://www.mts.by/");
-        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-        WebElement btnAgreeCookie = driver.findElement(By.id("cookie-agree"));
-        btnAgreeCookie.click();
-        driver.findElement(By.xpath("//button[@class='select__header']")).click();
-    }
-    
-    @Test
+    @Test // (dependsOnMethods = {"testConnectionServiceModuleEmpty"})
     public void testConnectionServiceModule() {
-        driver.findElement(By.xpath("//p[text()='Услуги связи']")).click();
+        driver.findElement(By.xpath("//p[text()='Услуги связи']")).click(); // Выбираем модуль "Услуги связи"
         WebElement connectionPhoneInput = driver.findElement(By.id("connection-phone"));
-        connectionPhoneInput.sendKeys("297777777");
+        connectionPhoneInput.sendKeys("297777777"); // Заполняем поле "connection-phone"
         WebElement connectionPaymentSumInput = driver.findElement(By.id("connection-sum"));
-        connectionPaymentSumInput.sendKeys("150");
+        connectionPaymentSumInput.sendKeys("150");  // Заполняем поле "connection-sum"
         WebElement connectionContinueButton = driver.findElement(By.xpath("//*[@id='pay-connection']/button"));
-        Assert.assertEquals(connectionContinueButton.getText(), "Продолжить");
-        connectionContinueButton.click();
+        Assert.assertEquals(connectionContinueButton.getText(), "Продолжить"); // Проверяем надпись на кнопке "Продолжить"
+        connectionContinueButton.click(); // Переходим к Frame
         driver.switchTo().frame(driver.findElement(By.xpath("//iframe[@class='bepaid-iframe']")));
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         // Проверка заполненных полей платежного фрейма.
         // Поле "Сумма к оплате".
         WebElement headerPaymentAmountFrame = driver.findElement(By.xpath("//p[@class='header__payment-amount']"));
@@ -75,8 +52,6 @@ public class MtsWebsiteTest {
 
     @Test(dataProvider = "paymentSystems") // Проверка логотипов платежных систем в платежном фрейме через модуль "Услуги связи"
     public void testPaymentSysLogos(String paymentSystemName) {
-        driver.get("https://www.mts.by/");
-        driver.findElement(By.xpath("//button[@class='select__header']")).click();
         driver.findElement(By.xpath("//p[text()='Услуги связи']")).click();
         WebElement connectionPhoneInput = driver.findElement(By.id("connection-phone"));
         connectionPhoneInput.sendKeys("297777777");
@@ -84,16 +59,14 @@ public class MtsWebsiteTest {
         connectionPaymentSumInput.sendKeys("150");
         driver.findElement(By.xpath("//*[@id='pay-connection']/button")).click();
         driver.switchTo().frame(driver.findElement(By.xpath("//iframe[@class='bepaid-iframe']")));
-        driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
         WebElement paymentSystemLogo = driver.findElement(By.xpath("//img[contains(@src, 'system')]"));
         Assert.assertFalse(paymentSystemLogo.isDisplayed(), "Отсутствует логотип " + paymentSystemName);
     }
 
     @Test (dependsOnMethods = {"testConnectionServiceModule"})
     public void testConnectionServiceModuleEmpty() {
-        driver.get("https://www.mts.by/");
-        driver.findElement(By.xpath("//button[@class='select__header']")).click();
         // Поиск элементов на странице
+        driver.findElement(By.xpath("//p[text()='Услуги связи']")).click();
         WebElement connectionPhoneInput = driver.findElement(By.id("connection-phone"));
         WebElement connectionPaymentSumInput = driver.findElement(By.id("connection-sum"));
         WebElement internetEmailInputField = driver.findElement(By.id("connection-email"));
@@ -101,12 +74,11 @@ public class MtsWebsiteTest {
         Assert.assertEquals(connectionPhoneInput.getAttribute("placeholder"), "Номер телефона");
         Assert.assertEquals(connectionPaymentSumInput.getAttribute("placeholder"), "Сумма");
         Assert.assertEquals(internetEmailInputField.getAttribute("placeholder"), "E-mail для отправки чека");
+        // При подобном делении проверка проходит примерно в 2 раза дольше, поэтому далее используем обычный порядок
     }
 
     @Test (dependsOnMethods = {"testConnectionServiceModuleEmpty"}) // Проверка незаполненных в модуле "Домашний интернет".
     public void testHomeInternetModule() {
-        driver.get("https://www.mts.by/");
-        driver.findElement(By.xpath("//button[@class='select__header']")).click();
         driver.findElement(By.xpath("//p[text()='Домашний интернет']")).click();
         WebElement internetPhoneInputField = driver.findElement(By.id("internet-phone"));
         Assert.assertEquals(internetPhoneInputField.getAttribute("placeholder"), "Номер абонента");
@@ -118,8 +90,6 @@ public class MtsWebsiteTest {
 
     @Test (dependsOnMethods = {"testHomeInternetModule"}) // Проверка незаполненных в модуле "Рассрочка".
     public void testInstallmentModule() {
-        driver.get("https://www.mts.by/");
-        driver.findElement(By.xpath("//button[@class='select__header']")).click();
         driver.findElement(By.xpath("//p[text()='Рассрочка']")).click();
         WebElement installmentScoreNumberField = driver.findElement(By.id("score-instalment"));
         Assert.assertEquals(installmentScoreNumberField.getAttribute("placeholder"), "Номер счета на 44");
@@ -131,8 +101,6 @@ public class MtsWebsiteTest {
 
     @Test (dependsOnMethods = {"testInstallmentModule"}) // Проверка незаполненных в модуле "Задолженность".
     public void testArrearsModule() {
-        driver.get("https://www.mts.by/");
-        driver.findElement(By.xpath("//button[@class='select__header']")).click();
         driver.findElement(By.xpath("//p[text()='Задолженность']")).click();
         WebElement arrearsScoreNumberField = driver.findElement(By.id("score-arrears"));
         Assert.assertEquals(arrearsScoreNumberField.getAttribute("placeholder"), "Номер счета на 2073");
@@ -140,10 +108,5 @@ public class MtsWebsiteTest {
         Assert.assertEquals(arrearsSumInputField.getAttribute("placeholder"), "Сумма");
         WebElement arrearsEmailInputField = driver.findElement(By.id("arrears-email"));
         Assert.assertEquals(arrearsEmailInputField.getAttribute("placeholder"), "E-mail для отправки чека");
-    }
-
-    @AfterClass
-    public void tearDown() {
-        driver.quit();
     }
 }
