@@ -18,7 +18,6 @@ public class BaseTest {
         return driver;
     }
 
-    //@BeforeClass
     @BeforeMethod
     protected void setUp() {
         driver = new ChromeDriver();
@@ -31,16 +30,8 @@ public class BaseTest {
         driver.findElement(By.xpath("//button[@class='select__header']")).click();
     }
 
-    //@AfterClass
     @AfterMethod
     protected void tearDown() {
         driver.quit();
     }
 }
-
-/*
-@Deprecated
-public WebDriver.Timeouts implicitlyWait(long time, java.util.concurrent.TimeUnit unit) {
-    return null;
-}
- */

@@ -9,7 +9,7 @@ import static org.apache.commons.lang3.StringUtils.*;
 
 public class MtsWebsiteTest extends BaseTest{
 
-    @Test // (dependsOnMethods = {"testConnectionServiceModuleEmpty"})
+    @Test
     public void testConnectionServiceModule() {
         driver.findElement(By.xpath("//p[text()='Услуги связи']")).click(); // Выбираем модуль "Услуги связи"
         WebElement connectionPhoneInput = driver.findElement(By.id("connection-phone"));
@@ -63,7 +63,7 @@ public class MtsWebsiteTest extends BaseTest{
         Assert.assertFalse(paymentSystemLogo.isDisplayed(), "Отсутствует логотип " + paymentSystemName);
     }
 
-    @Test (dependsOnMethods = {"testConnectionServiceModule"})
+    @Test (dependsOnMethods = {"testConnectionServiceModule"}) // Проверка незаполненных полей в модуле "Услуги связи".
     public void testConnectionServiceModuleEmpty() {
         // Поиск элементов на странице
         driver.findElement(By.xpath("//p[text()='Услуги связи']")).click();
@@ -77,7 +77,7 @@ public class MtsWebsiteTest extends BaseTest{
         // При подобном делении проверка проходит примерно в 2 раза дольше, поэтому далее используем обычный порядок
     }
 
-    @Test (dependsOnMethods = {"testConnectionServiceModuleEmpty"}) // Проверка незаполненных в модуле "Домашний интернет".
+    @Test (dependsOnMethods = {"testConnectionServiceModuleEmpty"}) // Проверка незаполненных полей в модуле "Домашний интернет".
     public void testHomeInternetModule() {
         driver.findElement(By.xpath("//p[text()='Домашний интернет']")).click();
         WebElement internetPhoneInputField = driver.findElement(By.id("internet-phone"));
@@ -88,7 +88,7 @@ public class MtsWebsiteTest extends BaseTest{
         Assert.assertEquals(internetEmailInputField.getAttribute("placeholder"), "E-mail для отправки чека");
     }
 
-    @Test (dependsOnMethods = {"testHomeInternetModule"}) // Проверка незаполненных в модуле "Рассрочка".
+    @Test (dependsOnMethods = {"testHomeInternetModule"}) // Проверка незаполненных полей в модуле "Рассрочка".
     public void testInstallmentModule() {
         driver.findElement(By.xpath("//p[text()='Рассрочка']")).click();
         WebElement installmentScoreNumberField = driver.findElement(By.id("score-instalment"));
@@ -99,7 +99,7 @@ public class MtsWebsiteTest extends BaseTest{
         Assert.assertEquals(installmentEmailInputField.getAttribute("placeholder"), "E-mail для отправки чека");
     }
 
-    @Test (dependsOnMethods = {"testInstallmentModule"}) // Проверка незаполненных в модуле "Задолженность".
+    @Test (dependsOnMethods = {"testInstallmentModule"}) // Проверка незаполненных полей в модуле "Задолженность".
     public void testArrearsModule() {
         driver.findElement(By.xpath("//p[text()='Задолженность']")).click();
         WebElement arrearsScoreNumberField = driver.findElement(By.id("score-arrears"));
