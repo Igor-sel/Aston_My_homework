@@ -18,7 +18,6 @@ public class MtsWebsiteTest extends BaseTest{
     final double SUM_PAYMENT_DOUBLE = 150.00;
     DecimalFormat decimalFormat = new DecimalFormat("#.00");
     final String SUM_PAYMENT_STRING = decimalFormat.format(SUM_PAYMENT_DOUBLE);
-
     final String EMAIL = "gmail@gmail.com";
 
     @Test
