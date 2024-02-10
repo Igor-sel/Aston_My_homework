@@ -18,6 +18,7 @@ public class BaseTest {
         return driver;
     }
 
+
     @BeforeMethod
     protected void setUp() {
         driver = new ChromeDriver();

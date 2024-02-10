@@ -2,20 +2,34 @@ package org.MtsWebsite;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.*;
+
+import java.text.DecimalFormat;
+import java.time.Duration;
+import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.*;
 
 public class MtsWebsiteTest extends BaseTest{
+    final String PHONE_NUMBER = "297777777";
+    final double SUM_PAYMENT_DOUBLE = 150.00;
+    DecimalFormat decimalFormat = new DecimalFormat("#.00");
+    final String SUM_PAYMENT_STRING = decimalFormat.format(SUM_PAYMENT_DOUBLE);
+
+    final String EMAIL = "gmail@gmail.com";
 
     @Test
     public void testConnectionServiceModule() {
         driver.findElement(By.xpath("//p[text()='Услуги связи']")).click(); // Выбираем модуль "Услуги связи"
         WebElement connectionPhoneInput = driver.findElement(By.id("connection-phone"));
-        connectionPhoneInput.sendKeys("297777777"); // Заполняем поле "connection-phone"
+        connectionPhoneInput.sendKeys(PHONE_NUMBER); // Заполняем поле "connection-phone"
         WebElement connectionPaymentSumInput = driver.findElement(By.id("connection-sum"));
-        connectionPaymentSumInput.sendKeys("150");  // Заполняем поле "connection-sum"
+        connectionPaymentSumInput.sendKeys(SUM_PAYMENT_STRING);  // Заполняем поле "connection-sum"
+        WebElement connectionEmailInput = driver.findElement(By.id("connection-email"));
+        connectionEmailInput.sendKeys(EMAIL);  // Заполняем поле "connection-email"
         WebElement connectionContinueButton = driver.findElement(By.xpath("//*[@id='pay-connection']/button"));
         Assert.assertEquals(connectionContinueButton.getText(), "Продолжить"); // Проверяем надпись на кнопке "Продолжить"
         connectionContinueButton.click(); // Переходим к Frame
@@ -29,7 +43,7 @@ public class MtsWebsiteTest extends BaseTest{
         Assert.assertEquals(deleteWhitespace(paymentButtonFrame.getAttribute("textContent")), "Оплатить150.00BYN");
         // Общее поле "Услуги связи и номер телефона".
         WebElement headerPaymentInfoFrame = driver.findElement(By.xpath("//p[@class='header__payment-info']"));
-        Assert.assertEquals(deleteWhitespace(headerPaymentInfoFrame.getAttribute("textContent")), "Оплата:УслугисвязиНомер:375297777777");
+        Assert.assertEquals(deleteWhitespace(headerPaymentInfoFrame.getAttribute("textContent")), "Оплата:УслугисвязиНомер:375" + PHONE_NUMBER);
         // Проверка незаполненных полей платежного фрейма.
         // Поле "Номер карты".
         WebElement labelCartNumberFrame = driver.findElement(By.xpath("//app-input/div/div/div[1]/label"));
@@ -45,22 +59,24 @@ public class MtsWebsiteTest extends BaseTest{
         Assert.assertEquals(deleteWhitespace(labelHolderNameFrame.getAttribute("textContent")), "Имядержателя(какнакарте)");
     }
 
-    @DataProvider(name = "paymentSystems")
-    public Object[] paymentSystems() {
-        return new Object[] {"visa", "mastercard", "belkart", "mir", "maestro" };
-    }
-
-    @Test(dataProvider = "paymentSystems") // Проверка логотипов платежных систем в платежном фрейме через модуль "Услуги связи"
-    public void testPaymentSysLogos(String paymentSystemName) {
+    @Test // Проверка наличия 5-ти логотипов платежных систем в платежном фрейме через модуль "Услуги связи"
+    public void testPaymentSysLogos() { // Снова заполняем форму, чтобы открыть фрейм
         driver.findElement(By.xpath("//p[text()='Услуги связи']")).click();
         WebElement connectionPhoneInput = driver.findElement(By.id("connection-phone"));
-        connectionPhoneInput.sendKeys("297777777");
+        connectionPhoneInput.sendKeys(PHONE_NUMBER);
         WebElement connectionPaymentSumInput = driver.findElement(By.id("connection-sum"));
-        connectionPaymentSumInput.sendKeys("150");
+        connectionPaymentSumInput.sendKeys(SUM_PAYMENT_STRING);
         driver.findElement(By.xpath("//*[@id='pay-connection']/button")).click();
         driver.switchTo().frame(driver.findElement(By.xpath("//iframe[@class='bepaid-iframe']")));
-        WebElement paymentSystemLogo = driver.findElement(By.xpath("//img[contains(@src, 'system')]"));
-        Assert.assertFalse(paymentSystemLogo.isDisplayed(), "Отсутствует логотип " + paymentSystemName);
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        List<WebElement> logos = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy
+                (By.xpath("//input[@id='cc-number']/../following-sibling::div/.//img")));
+        Assert.assertEquals(logos.size(), 5, "Five logos are not displayed");
+
+        for (WebElement logo : logos) {
+            Assert.assertTrue(logo.isDisplayed(), "Logo is not displayed");
+        }
     }
 
     @Test (dependsOnMethods = {"testConnectionServiceModule"}) // Проверка незаполненных полей в модуле "Услуги связи".
@@ -69,11 +85,11 @@ public class MtsWebsiteTest extends BaseTest{
         driver.findElement(By.xpath("//p[text()='Услуги связи']")).click();
         WebElement connectionPhoneInput = driver.findElement(By.id("connection-phone"));
         WebElement connectionPaymentSumInput = driver.findElement(By.id("connection-sum"));
-        WebElement internetEmailInputField = driver.findElement(By.id("connection-email"));
+        WebElement connectionEmailInputField = driver.findElement(By.id("connection-email"));
         // Проверка найденных элементов
         Assert.assertEquals(connectionPhoneInput.getAttribute("placeholder"), "Номер телефона");
         Assert.assertEquals(connectionPaymentSumInput.getAttribute("placeholder"), "Сумма");
-        Assert.assertEquals(internetEmailInputField.getAttribute("placeholder"), "E-mail для отправки чека");
+        Assert.assertEquals(connectionEmailInputField.getAttribute("placeholder"), "E-mail для отправки чека");
         // При подобном делении проверка проходит примерно в 2 раза дольше, поэтому далее используем обычный порядок
     }
 
