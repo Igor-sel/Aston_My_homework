@@ -7,7 +7,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.*;
 
-import java.text.DecimalFormat;
 import java.time.Duration;
 import java.util.List;
 
@@ -16,7 +15,6 @@ import static org.apache.commons.lang3.StringUtils.*;
 public class MtsWebsiteTest extends BaseTest{
     final String PHONE_NUMBER = "297777777";
     final double SUM_PAYMENT_DOUBLE = 150.00;
-    DecimalFormat decimalFormat = new DecimalFormat("#.00");
     final String SUM_PAYMENT_STRING = decimalFormat.format(SUM_PAYMENT_DOUBLE);
     final String EMAIL = "gmail@gmail.com";
 
@@ -36,10 +34,10 @@ public class MtsWebsiteTest extends BaseTest{
         // Проверка заполненных полей платежного фрейма.
         // Поле "Сумма к оплате".
         WebElement headerPaymentAmountFrame = driver.findElement(By.xpath("//p[@class='header__payment-amount']"));
-        Assert.assertEquals(deleteWhitespace(headerPaymentAmountFrame.getAttribute("textContent")), "150.00BYN");
+        Assert.assertEquals(deleteWhitespace(headerPaymentAmountFrame.getAttribute("textContent")), SUM_PAYMENT_STRING + "BYN");
         // Кнопка "Сумма к оплате".
         WebElement paymentButtonFrame = driver.findElement(By.xpath("//app-card-page/div/div[1]/button"));
-        Assert.assertEquals(deleteWhitespace(paymentButtonFrame.getAttribute("textContent")), "Оплатить150.00BYN");
+        Assert.assertEquals(deleteWhitespace(paymentButtonFrame.getAttribute("textContent")), "Оплатить" + SUM_PAYMENT_STRING + "BYN");
         // Общее поле "Услуги связи и номер телефона".
         WebElement headerPaymentInfoFrame = driver.findElement(By.xpath("//p[@class='header__payment-info']"));
         Assert.assertEquals(deleteWhitespace(headerPaymentInfoFrame.getAttribute("textContent")), "Оплата:УслугисвязиНомер:375" + PHONE_NUMBER);
