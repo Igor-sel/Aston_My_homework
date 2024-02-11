@@ -87,7 +87,8 @@ public class MtsWebsiteTest extends BaseTest{
         Assert.assertEquals(connectionPhoneInput.getAttribute("placeholder"), "Номер телефона");
         Assert.assertEquals(connectionPaymentSumInput.getAttribute("placeholder"), "Сумма");
         Assert.assertEquals(connectionEmailInputField.getAttribute("placeholder"), "E-mail для отправки чека");
-        // При подобном делении проверка проходит примерно в 2 раза дольше, поэтому далее используем обычный порядок
+        // Здесь попробовал "разделить" метод (findElement - отдельно, assertEquals - отдельно). С точки зрения наглядности, так лучше,
+        // как правильно - не знаю, поэтому далее пока использую обычную последовательность (нашел элемент >>> сразу провел проверку).
     }
 
     @Test (dependsOnMethods = {"testConnectionServiceModuleEmpty"}) // Проверка незаполненных полей в модуле "Домашний интернет".
