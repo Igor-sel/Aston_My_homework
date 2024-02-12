@@ -32,6 +32,7 @@ public class BaseTest {
     @BeforeMethod
     protected void setUp() {
         driver = new ChromeDriver();
+        driver.manage().window().maximize();
         driver.manage().deleteAllCookies();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(IMPLICITLY_WAIT));
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(PAGE_LOAD_TIMEOUT));

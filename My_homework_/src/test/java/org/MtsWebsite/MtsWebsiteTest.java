@@ -43,16 +43,16 @@ public class MtsWebsiteTest extends BaseTest{
         Assert.assertEquals(deleteWhitespace(headerPaymentInfoFrame.getAttribute("textContent")), "Оплата:УслугисвязиНомер:375" + PHONE_NUMBER);
         // Проверка незаполненных полей платежного фрейма.
         // Поле "Номер карты".
-        WebElement labelCartNumberFrame = driver.findElement(By.xpath("//app-input/div/div/div[1]/label"));
+        WebElement labelCartNumberFrame = driver.findElement(By.xpath("//input[@id='cc-number']/following-sibling::label"));
         Assert.assertEquals(deleteWhitespace(labelCartNumberFrame.getAttribute("textContent")), "Номеркарты");
         // Поле "Срок действия карты".
-        WebElement labelValidityPeriodFrame = driver.findElement(By.xpath("//app-card-input/form/div[1]/div[2]//div[1]/label"));
+        WebElement labelValidityPeriodFrame = driver.findElement(By.xpath("//div[contains(@class,'expires-input')]//label"));
         Assert.assertEquals(deleteWhitespace(labelValidityPeriodFrame.getAttribute("textContent")), "Срокдействия");
         // Поле "CVC код".
-        WebElement labelCvccodeFrame = driver.findElement(By.xpath("//app-card-input/form/div[1]/div[2]/div[3]//div[1]/label"));
+        WebElement labelCvccodeFrame = driver.findElement(By.xpath("//input[@name='verification_value']/following-sibling::label"));
         Assert.assertEquals(deleteWhitespace(labelCvccodeFrame.getAttribute("textContent")), "CVC");
         // Поле "Имя держателя карты".
-        WebElement labelHolderNameFrame = driver.findElement(By.xpath("//app-card-input/form/div[1]/div[3]//div[1]/label"));
+        WebElement labelHolderNameFrame = driver.findElement(By.xpath("//input[@autocomplete='cc-name']/following-sibling::label"));
         Assert.assertEquals(deleteWhitespace(labelHolderNameFrame.getAttribute("textContent")), "Имядержателя(какнакарте)");
     }
 
@@ -66,13 +66,13 @@ public class MtsWebsiteTest extends BaseTest{
         driver.findElement(By.xpath("//*[@id='pay-connection']/button")).click();
         driver.switchTo().frame(driver.findElement(By.xpath("//iframe[@class='bepaid-iframe']")));
 
+        String[] paymentSystems = {"mastercard", "visa", "belkart", "mir", "maestro"};
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        List<WebElement> logos = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy
-                (By.xpath("//input[@id='cc-number']/../following-sibling::div/.//img")));
-        Assert.assertEquals(logos.size(), 5, "Five logos are not displayed");
 
-        for (WebElement logo : logos) {
-            Assert.assertTrue(logo.isDisplayed(), "Logo is not displayed");
+        for (String system : paymentSystems) {
+            String xpath = "//img[contains(@src,'" + system + "-system')]";
+            WebElement logo = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
+            Assert.assertTrue(logo.isDisplayed(), "Логотип " + system + " не найден на странице");
         }
     }
 
