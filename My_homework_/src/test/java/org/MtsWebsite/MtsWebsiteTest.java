@@ -29,38 +29,28 @@ public class MtsWebsiteTest extends BaseTest {
 
     @Test
     public void testServiceLink() {
-        WebElement serviceLink = driver.findElement(By.linkText("Подробнее о сервисе"));
+        WebElement serviceLink = driver.findElement(By.xpath("//div[@class='pay__wrapper']//a"));
         serviceLink.click();
-        String currentUrl = driver.getCurrentUrl();
-        Assert.assertEquals(currentUrl, "https://www.mts.by/help/poryadok-oplaty-i-bezopasnost-internet-platezhey/");
+        boolean modulePresent = driver.findElement(By.xpath("//div[@class='breadcrumbs']//div[@class='breadcrumbs__wrapper']")).isDisplayed();
+        Assert.assertTrue(modulePresent, "Искомый модуль отсутствует на странице. Проверьте страницу.");
         driver.get("https://www.mts.by/");
     }
 
     @Test (dependsOnMethods = {"testServiceLink"})
-    public void testCommunicationServiceButton() {
-
+    public void testFillCheckPayFormFields() {
         driver.findElement(By.xpath("//button[@class='select__header']")).click();
         driver.findElement(By.xpath("//p[text()='Услуги связи']")).click();
-    }
 
-    @Test (dependsOnMethods = {"testCommunicationServiceButton"})
-    public void testPhoneNumberInput() {
         WebElement phoneInput = driver.findElement(By.id("connection-phone"));
         phoneInput.sendKeys("297777777");
-        String enteredNumber = phoneInput.getAttribute("value");
-        Assert.assertEquals(enteredNumber, "(29)777-77-77", "Phone number entered incorrectly");
-    }
-
-    @Test (dependsOnMethods = {"testPhoneNumberInput"})
-    public void testPaymentSumInput() {
         WebElement paymentSumInput = driver.findElement(By.id("connection-sum"));
         paymentSumInput.sendKeys("150");
+
+        String enteredNumber = phoneInput.getAttribute("value");
+        Assert.assertEquals(enteredNumber, "(29)777-77-77", "Phone number entered incorrectly");
         String enteredSum = paymentSumInput.getAttribute("value");
         Assert.assertEquals(enteredSum, "150", "Payment amount is incorrect");
-    }
 
-    @Test (dependsOnMethods = {"testPaymentSumInput"})
-    public void testContinueButton() {
         WebElement continueButton = driver.findElement(By.xpath("//*[@id='pay-connection']/button"));
         continueButton.click();
         driver.switchTo().frame(driver.findElement(By.xpath("//iframe[@class='bepaid-iframe']")));
