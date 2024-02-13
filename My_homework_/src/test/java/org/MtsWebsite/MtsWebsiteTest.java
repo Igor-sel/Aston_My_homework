@@ -20,14 +20,14 @@ public class MtsWebsiteTest extends BaseTest{
 
     @Test
     public void testConnectionServiceModule() {
-        driver.findElement(By.xpath("//p[text()='Услуги связи']")).click(); // Выбираем модуль "Услуги связи"
+        driver.findElement(By.xpath("//div[@class='pay__form']//p")).click(); // Выбираем модуль "Услуги связи"
         WebElement connectionPhoneInput = driver.findElement(By.id("connection-phone"));
         connectionPhoneInput.sendKeys(PHONE_NUMBER); // Заполняем поле "connection-phone"
         WebElement connectionPaymentSumInput = driver.findElement(By.id("connection-sum"));
         connectionPaymentSumInput.sendKeys(SUM_PAYMENT_STRING);  // Заполняем поле "connection-sum"
         WebElement connectionEmailInput = driver.findElement(By.id("connection-email"));
         connectionEmailInput.sendKeys(EMAIL);  // Заполняем поле "connection-email"
-        WebElement connectionContinueButton = driver.findElement(By.xpath("//*[@id='pay-connection']/button"));
+        WebElement connectionContinueButton = driver.findElement(By.xpath("//div[@class='pay__forms']//button"));
         Assert.assertEquals(connectionContinueButton.getText(), "Продолжить"); // Проверяем надпись на кнопке "Продолжить"
         connectionContinueButton.click(); // Переходим к Frame
         driver.switchTo().frame(driver.findElement(By.xpath("//iframe[@class='bepaid-iframe']")));
@@ -36,7 +36,7 @@ public class MtsWebsiteTest extends BaseTest{
         WebElement headerPaymentAmountFrame = driver.findElement(By.xpath("//p[@class='header__payment-amount']"));
         Assert.assertEquals(deleteWhitespace(headerPaymentAmountFrame.getAttribute("textContent")), SUM_PAYMENT_STRING + "BYN");
         // Кнопка "Сумма к оплате".
-        WebElement paymentButtonFrame = driver.findElement(By.xpath("//app-card-page/div/div[1]/button"));
+        WebElement paymentButtonFrame = driver.findElement(By.xpath("//div[@class='card-page__card']/button"));
         Assert.assertEquals(deleteWhitespace(paymentButtonFrame.getAttribute("textContent")), "Оплатить" + SUM_PAYMENT_STRING + "BYN");
         // Общее поле "Услуги связи и номер телефона".
         WebElement headerPaymentInfoFrame = driver.findElement(By.xpath("//p[@class='header__payment-info']"));
@@ -58,12 +58,12 @@ public class MtsWebsiteTest extends BaseTest{
 
     @Test // Проверка наличия 5-ти логотипов платежных систем в платежном фрейме через модуль "Услуги связи"
     public void testPaymentSysLogos() { // Снова заполняем форму, чтобы открыть фрейм
-        driver.findElement(By.xpath("//p[text()='Услуги связи']")).click();
+        driver.findElement(By.xpath("//div[@class='pay__form']//p")).click();
         WebElement connectionPhoneInput = driver.findElement(By.id("connection-phone"));
         connectionPhoneInput.sendKeys(PHONE_NUMBER);
         WebElement connectionPaymentSumInput = driver.findElement(By.id("connection-sum"));
         connectionPaymentSumInput.sendKeys(SUM_PAYMENT_STRING);
-        driver.findElement(By.xpath("//*[@id='pay-connection']/button")).click();
+        driver.findElement(By.xpath("//div[@class='pay__forms']//button")).click();
         driver.switchTo().frame(driver.findElement(By.xpath("//iframe[@class='bepaid-iframe']")));
 
         String[] paymentSystems = {"mastercard", "visa", "belkart", "mir", "maestro"};
@@ -79,7 +79,7 @@ public class MtsWebsiteTest extends BaseTest{
     @Test (dependsOnMethods = {"testConnectionServiceModule"}) // Проверка незаполненных полей в модуле "Услуги связи".
     public void testConnectionServiceModuleEmpty() {
         // Поиск элементов на странице
-        driver.findElement(By.xpath("//p[text()='Услуги связи']")).click();
+        driver.findElement(By.xpath("//div[@class='pay__form']//p")).click();
         WebElement connectionPhoneInput = driver.findElement(By.id("connection-phone"));
         WebElement connectionPaymentSumInput = driver.findElement(By.id("connection-sum"));
         WebElement connectionEmailInputField = driver.findElement(By.id("connection-email"));
@@ -93,7 +93,7 @@ public class MtsWebsiteTest extends BaseTest{
 
     @Test (dependsOnMethods = {"testConnectionServiceModuleEmpty"}) // Проверка незаполненных полей в модуле "Домашний интернет".
     public void testHomeInternetModule() {
-        driver.findElement(By.xpath("//p[text()='Домашний интернет']")).click();
+        driver.findElement(By.xpath("//div[@class='pay__form']//p[text()='Домашний интернет']")).click();
         WebElement internetPhoneInputField = driver.findElement(By.id("internet-phone"));
         Assert.assertEquals(internetPhoneInputField.getAttribute("placeholder"), "Номер абонента");
         WebElement internetSumInputField = driver.findElement(By.id("internet-sum"));
@@ -104,7 +104,7 @@ public class MtsWebsiteTest extends BaseTest{
 
     @Test (dependsOnMethods = {"testHomeInternetModule"}) // Проверка незаполненных полей в модуле "Рассрочка".
     public void testInstallmentModule() {
-        driver.findElement(By.xpath("//p[text()='Рассрочка']")).click();
+        driver.findElement(By.xpath("//div[@class='pay__form']//p[text()='Рассрочка']")).click();
         WebElement installmentScoreNumberField = driver.findElement(By.id("score-instalment"));
         Assert.assertEquals(installmentScoreNumberField.getAttribute("placeholder"), "Номер счета на 44");
         WebElement installmentSumInputField = driver.findElement(By.id("instalment-sum"));
@@ -115,7 +115,7 @@ public class MtsWebsiteTest extends BaseTest{
 
     @Test (dependsOnMethods = {"testInstallmentModule"}) // Проверка незаполненных полей в модуле "Задолженность".
     public void testArrearsModule() {
-        driver.findElement(By.xpath("//p[text()='Задолженность']")).click();
+        driver.findElement(By.xpath("//div[@class='pay__form']//p[text()='Задолженность']")).click();
         WebElement arrearsScoreNumberField = driver.findElement(By.id("score-arrears"));
         Assert.assertEquals(arrearsScoreNumberField.getAttribute("placeholder"), "Номер счета на 2073");
         WebElement arrearsSumInputField = driver.findElement(By.id("arrears-sum"));
