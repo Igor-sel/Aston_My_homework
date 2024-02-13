@@ -39,7 +39,7 @@ public class MtsWebsiteTest extends BaseTest {
     @Test (dependsOnMethods = {"testServiceLink"})
     public void testFillCheckPayFormFields() {
         driver.findElement(By.xpath("//button[@class='select__header']")).click();
-        driver.findElement(By.xpath("//p[text()='Услуги связи']")).click();
+        driver.findElement(By.xpath("//div[@class='pay__form']//p")).click();
 
         WebElement phoneInput = driver.findElement(By.id("connection-phone"));
         phoneInput.sendKeys("297777777");
