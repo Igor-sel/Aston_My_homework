@@ -31,8 +31,8 @@ public class MtsWebsiteTest extends BaseTest {
     public void testServiceLink() {
         WebElement serviceLink = driver.findElement(By.xpath("//div[@class='pay__wrapper']//a"));
         serviceLink.click();
-        boolean modulePresent = driver.findElement(By.xpath("//div[@class='breadcrumbs']//div[@class='breadcrumbs__wrapper']")).isDisplayed();
-        Assert.assertTrue(modulePresent, "Искомый модуль отсутствует на странице. Проверьте страницу.");
+        WebElement moduleElement = driver.findElement(By.xpath("//div[@class='breadcrumbs']//div[@class='breadcrumbs__wrapper']"));
+        Assert.assertTrue(moduleElement.isDisplayed(), "Искомый модуль не отображается на странице. Проверьте страницу.");
         driver.get("https://www.mts.by/");
     }
 
@@ -51,7 +51,8 @@ public class MtsWebsiteTest extends BaseTest {
         String enteredSum = paymentSumInput.getAttribute("value");
         Assert.assertEquals(enteredSum, "150", "Payment amount is incorrect");
 
-        WebElement continueButton = driver.findElement(By.xpath("//*[@id='pay-connection']/button"));
+        WebElement continueButton = driver.findElement(By.xpath("//form[@id='pay-connection']/button"));
+        // Если что, XPath можно такой "//div[@class='pay__forms']//button", но мне больше фраза 'pay-connection' нравиться, хотя с "//div..." будет правильнее, наверно)
         continueButton.click();
         driver.switchTo().frame(driver.findElement(By.xpath("//iframe[@class='bepaid-iframe']")));
         WebElement headerFrame = driver.findElement(By.xpath("//p[@class='header__payment-info']"));
