@@ -1,3 +1,7 @@
+# myEdit Allure (21022024)
+.allure
+/*/allure-results/
+
 ### myEdit Maven (25012024) ###
 log/
 target/
